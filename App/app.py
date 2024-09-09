@@ -9,10 +9,9 @@ files = st.file_uploader('Upload', type='csv', accept_multiple_files=True)
 list_continentes = ['África','América Central','América do Norte', 'América do Sul', 'Ásia', 'Europa', 'Oriente Médio', 'Oceania']
 
 
-if files is not None:
+if files != []:
     for file in files:
         data = pd.read_csv(file)
-        st.write(data)
         #Primeiro obtive a identificação do ano, que está dentro de uma frase na terceira linha
         line = data.iloc[1][0]
         #Utilizo Regex para extrair o ano
@@ -37,9 +36,31 @@ if files is not None:
         #Por fim, retiro as linhas que contém o total de cada continente, deixando apenas os países
         data = data[~data['Pais'].isin(list_continentes)]
 
+        data = data.melt(id_vars=['Continente', 'Pais', 'Ano'], var_name='Mes', value_name='Qtd')
+
         #Concateno em um dataframe, pois assim permito que o usuário faça a importação de diversos CSVs, um para cada ano
         df = pd.concat([df, data])
 
-df_melt = df.melt(id_vars=['Pais', 'Ano', 'Continente'], var_name='Mes', value_name='Qtd')
+    #Crio a lista de continentes
+    list_cont = df['Continente'].drop_duplicates().tolist()
+    list_cont.append('Todos')
 
-df_melt.to_csv(r'C:\Users\RodrigoPintoMesquita\Documents\GitHub\DR1_TP3\Data\arquivo_carregado.csv', index=False)
+    #Pego o id da opção "Todos"
+    default_cont = list_cont.index('Todos')
+
+    #Crio o filtro de continentes
+    filter_cont = st.selectbox('Filtrar Continentes', list_cont, index=default_cont)
+
+    #Aplico a condição para só filtrar se houver seleção
+    if filter_cont != 'Todos':
+        df = df.loc[df['Continente'] == filter_cont]
+
+    #Crio o filtro de colunas
+    list_colunas = st.multiselect('Selecione as colunas', df.columns, df.columns)
+    #Aplico o filtro
+    df = df[list_colunas]
+
+    st.write(df)
+
+    
+    
