@@ -4,6 +4,7 @@ import streamlit as st
 import regex as re
 import time
 
+#Adicionando o Color Picker
 col1, col2 = st.columns(2)
 
 with col1:
@@ -12,6 +13,7 @@ with col1:
 with col2:
     cor_fonte = st.color_picker("Escolha a cor da fonte", "#000000")  
 
+#Alterando o estilo da classe stApp
 st.markdown(f"<style> .stApp {{background-color: {cor_fundo}; color:{cor_fonte};}}   </style>", unsafe_allow_html=True)
 
 
@@ -26,14 +28,6 @@ if files != []:
     with st.spinner('Upload em andamento...'):
         time.sleep(2)
         st.success("Upload concluído!")
-
-    #Adicionando a barra de progresso
-    my_bar = st.progress(0, text="Carregando a Visualização...")
-    for percent_complete in range(100):
-        time.sleep(0.005)
-        my_bar.progress(percent_complete + 1, text="Carregando a Visualização...")
-    time.sleep(0.5)
-    my_bar.empty()
 
     for file in files:
         data = pd.read_csv(file)
@@ -85,6 +79,14 @@ if files != []:
     #Aplico o filtro
     df = df[list_colunas]
 
+    #Adicionando a barra de progresso
+    my_bar = st.progress(0, text="Carregando a Visualização...")
+    for percent_complete in range(100):
+        time.sleep(0.005)
+        my_bar.progress(percent_complete + 1, text="Carregando a Visualização...")
+    time.sleep(0.5)
+    my_bar.empty()
+
     #Mostro a tabela filtrada
     st.write(df) 
 
@@ -98,5 +100,6 @@ if files != []:
         file_name="base.csv",
         mime="text/csv",
     )
+
 
     
