@@ -4,6 +4,8 @@ import streamlit as st
 import regex as re
 import time
 from st_aggrid import AgGrid, GridOptionsBuilder
+import plotly.express as px
+
 
 def barra_lateral():
     st.sidebar.header('Filtros')
@@ -115,6 +117,31 @@ def exibe_tabelas(df_filt):
 
         AgGrid(df_filt, gridOptions=gridOptions, enable_enterprise_modules=True)
 
+def graf_simples(df):
+    # Criando o gráfico de pizza
+    fig = px.pie(
+        df,
+        values='Qtd',
+        names='Continente',
+        title='Quantidade de Turistas por Continente',
+        labels={'Qtd Tutistas': 'Qtd'},
+        hole=False
+    )
+
+    fig.update_traces(textinfo='label+percent', textfont_size=10)
+
+    st.plotly_chart(fig)
+
+    #Criando Gráfico de linhas
+    cmap = {'Janeiro':1, 'Fevereiro':2,'Março':3,'Abril':4,'Maio':5, 'Junho':6,'Julho': 7,'Agosto': 8,'Setembro': 9,'Outubro': 10, 'Novembro': 11, 'Dezembro': 12}
+    df['Mes'] = df['Mes'].map(cmap)
+    df['Data'] = pd.to_datetime(df['Ano'].astype(str) + '-' + df['Mes'].astype(str) + '-01', format='%Y-%m-%d')
+    df_ag= df.groupby('Data', as_index=False)['Qtd'].sum()
+
+    fig = px.line(df_ag, x='Data', y='Qtd', title='Qtd Turistas por Mês')
+    st.plotly_chart(fig)
+
+
 ################### INICIANDO O APP ######################
 
 barra_lateral()
@@ -127,7 +154,6 @@ if files:
     df_filt = filtra_df(df)
     exibe_tabelas(df_filt)
     st.download_button(label="Baixar Dados", data=csv, file_name="base.csv", mime="text/csv")
-
+    graf_simples(df)
 end = time.time()
 st.write(f'Tempo de execução: {end - start:.2f} segundos')
-    
