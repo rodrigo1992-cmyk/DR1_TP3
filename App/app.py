@@ -188,6 +188,12 @@ files = upload()
 
 start = time.time()
 
+st.write('# Rodrigo_Mesquita_DR1_TP3')
+st.write('## Desenvolvimento Front-End com Python (com Streamlit) [24E3_1]')
+st.write('Notebook disponível em: https://github.com/rodrigo1992-cmyk/DR1_TP3')
+st.write('Para testar o aplicativo, realizar upload dos arquivos disponíveis em: https://github.com/rodrigo1992-cmyk/DR1_TP3/tree/main/Data')
+
+
 if files:
     df, csv = tratamento(files)
     df_filt, df_filt_tab = filtra_df(df)
